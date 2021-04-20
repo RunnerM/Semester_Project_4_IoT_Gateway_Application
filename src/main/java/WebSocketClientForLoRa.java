@@ -34,7 +34,7 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
     }
 
     //onError()
-    public void onError​(WebSocket webSocket, Throwable error) {
+    public void onError(WebSocket webSocket, Throwable error) {
         System.out.println("A " + error.getCause() + " exception was thrown.");
         System.out.println("Message: " + error.getLocalizedMessage());
         webSocket.abort();
@@ -46,24 +46,31 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         return new CompletableFuture().completedFuture("onClose() completed.").thenAccept(System.out::println);
     };
     //onPing()
-    public CompletionStage<?> onPing​(WebSocket webSocket, ByteBuffer message) {
+    public CompletionStage<?> onPing(WebSocket webSocket, ByteBuffer message) {
         webSocket.request(1);
         System.out.println("Ping: Client ---> Server");
         System.out.println(message.asCharBuffer().toString());
         return new CompletableFuture().completedFuture("Ping completed.").thenAccept(System.out::println);
     };
     //onPong()
-    public CompletionStage<?> onPong​(WebSocket webSocket, ByteBuffer message) {
+    public CompletionStage<?> onPong(WebSocket webSocket, ByteBuffer message) {
         webSocket.request(1);
         System.out.println("Pong: Client ---> Server");
         System.out.println(message.asCharBuffer().toString());
         return new CompletableFuture().completedFuture("Pong completed.").thenAccept(System.out::println);
     };
     //onText()
-    public CompletionStage<?> onText​(WebSocket webSocket, CharSequence data, boolean last) throws JSONException {
-        String indented = (new JSONObject(data.toString())).toString(4);
-        System.out.println(indented);
-        webSocket.request(1);
+    public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+        try{
+            String indented = (new JSONObject(data.toString())).toString(4);
+            System.out.println(indented);
+            webSocket.request(1);
+        }catch(JSONException e){
+            System.out.println("Json Error");
+            return null;
+        }
+
+
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     };
 }
