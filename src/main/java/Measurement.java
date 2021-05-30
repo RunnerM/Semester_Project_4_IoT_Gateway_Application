@@ -18,7 +18,6 @@ public class Measurement
         Humidity = humidity;
         this.CO2Level = CO2Level;
         this.lux=lux;
-
     }
 
 
