@@ -69,8 +69,6 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             System.out.println("Json Error");
             return null;
         }
-
-
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     };
 }
