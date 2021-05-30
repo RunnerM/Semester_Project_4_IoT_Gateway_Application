@@ -6,17 +6,18 @@ public class Measurement
     int Gym_Id;
     Time time;
     Date date;
-    float Temperature;
-    float Humidity;
-    float CO2Level;
-
-    public Measurement(Time time, Date date, float temperature, float humidity, float CO2Level)
+    int Temperature;
+    int Humidity;
+    int CO2Level;
+    int lux;
+    public Measurement(Time time, Date date, int temperature, int humidity, int CO2Level, int lux)
     {
         this.time = time;
         this.date = date;
         Temperature = temperature;
         Humidity = humidity;
         this.CO2Level = CO2Level;
+        this.lux=lux;
     }
 
 
@@ -45,7 +46,7 @@ public class Measurement
         return Temperature;
     }
 
-    public void setTemperature(float temperature)
+    public void setTemperature(int temperature)
     {
         Temperature = temperature;
     }
@@ -55,19 +56,27 @@ public class Measurement
         return Humidity;
     }
 
-    public void setHumidity(float humidity)
+    public void setHumidity(int humidity)
     {
         Humidity = humidity;
     }
 
-    public float getCO2Level()
+    public int getCO2Level()
     {
         return CO2Level;
     }
 
-    public void setCO2Level(float CO2Level)
+    public void setCO2Level(int CO2Level)
     {
         this.CO2Level = CO2Level;
+    }
+
+    public int getLux() {
+        return lux;
+    }
+
+    public void setLux(int lux) {
+        this.lux = lux;
     }
 
     @Override
@@ -79,6 +88,7 @@ public class Measurement
                 ", Temperature=" + Temperature +
                 ", Humidity=" + Humidity +
                 ", CO2Level=" + CO2Level +
+                ", Lux=" + lux +
                 '}';
     }
 }
