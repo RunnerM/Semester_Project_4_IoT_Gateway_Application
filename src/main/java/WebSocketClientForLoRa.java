@@ -4,8 +4,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletableFuture;
+import com.google.gson.Gson;
 
 public class WebSocketClientForLoRa implements WebSocket.Listener {
     private WebSocket server = null;
@@ -61,14 +64,46 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
     };
     //onText()
     public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+        String indented = null;
         try{
-            String indented = (new JSONObject(data.toString())).toString(4);
+            indented = (new JSONObject(data.toString())).toString(4);
             System.out.println(indented);
             webSocket.request(1);
         }catch(JSONException e){
             System.out.println("Json Error");
             return null;
         }
+        Gson gson = new Gson();
+        Message message = gson.fromJson(indented, Message.class);
+        //idk what rx or cmd mean
+        if (message.getCmd().equals("rx"))
+        {
+            //hex values of each piece of data
+            String humhex = message.getData().substring(2,4);
+            String temphex = message.getData().substring(6,8);
+            String co2hex = message.getData().substring(8,12);
+            String luxhex = message.getData().substring(12,16);
+            //time from message
+            Time t = new Time(message.ts);
+            Time t1 = new Time(t.getHours(), t.getMinutes(), 0);
+            Date date = new Date(message.ts);
+            //hex to int
+            int humidity = Integer.parseInt(humhex,16);
+            int temperature = Integer.parseInt(temphex,16);
+            //not sure if its correct for co2 and lux
+            int co2 = Integer.parseInt(co2hex, 16);
+            int lux = Integer.parseInt(luxhex,16);
+            Measurement measurement = new Measurement(0,t1,date,temperature,humidity,co2,lux);
+            //send stuff to db under this
+            //AMOGUS
+            //also call the senCommand method after putting the data in the db
+
+        }
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     };
+    private void sendCommand()
+    {
+        //must change the downlink byte pattern
+    }
+
 }

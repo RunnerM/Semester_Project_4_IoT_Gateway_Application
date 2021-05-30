@@ -3,15 +3,16 @@ import java.sql.Time;
 
 public class Measurement
 {
-    int Gym_Id;
+    int terrariumId;
     Time time;
     Date date;
     int Temperature;
     int Humidity;
     int CO2Level;
     int lux;
-    public Measurement(Time time, Date date, int temperature, int humidity, int CO2Level, int lux)
+    public Measurement(int tid,Time time, Date date, int temperature, int humidity, int CO2Level, int lux)
     {
+        terrariumId = tid;
         this.time = time;
         this.date = date;
         Temperature = temperature;
@@ -21,6 +22,13 @@ public class Measurement
 
     }
 
+    public int getTerrariumId() {
+        return terrariumId;
+    }
+
+    public void setTerrariumId(int terrariumId) {
+        this.terrariumId = terrariumId;
+    }
 
     public Time getTime()
     {
@@ -84,6 +92,7 @@ public class Measurement
     public String toString()
     {
         return "Measurement{" +
+                ", TerrariumID=" + terrariumId +
                 ", time=" + time +
                 ", date=" + date +
                 ", Temperature=" + Temperature +
