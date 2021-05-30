@@ -73,6 +73,7 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             System.out.println("Json Error");
             return null;
         }
+        //maybe inject gson, idk
         Gson gson = new Gson();
         Message message = gson.fromJson(indented, Message.class);
         //idk what rx or cmd mean
@@ -103,7 +104,34 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
     };
     private void sendCommand()
     {
-        //must change the downlink byte pattern
+        //byte 0 : 0 = servo position 100, 1 = servo position -100
+        //byte 1 : 0 = led off, 1 = led on
+        String command = null;
+        //replace the db stuff tomorrow
+        //surround the following with try catch maybe, idk
+        if(amogusDB.getServoState())
+        {
+            command = "01";
+        }
+        else
+        {
+            command = "00";
+        }
+        if(amogusDB.getLightState())
+        {
+            command += "01";
+        }
+        else
+        {
+            command += "00";
+        }
+        //do we need a confirmed field in the downlink message? and do we need to set it to false here?
+        DownlinkMessage msg = new DownlinkMessage("tx","0004A30B00251001",1, command);
+        //refer to line 76
+        Gson gson = new Gson();
+        //surround with try catch maybe
+        sendDownLink(gson.toJson(msg));
+
     }
 
 }
