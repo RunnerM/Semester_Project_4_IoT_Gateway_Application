@@ -68,7 +68,6 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         try{
             indented = (new JSONObject(data.toString())).toString(4);
             System.out.println(indented);
-            webSocket.request(1);
         }catch(JSONException e){
             System.out.println("Json Error");
             return null;
@@ -95,9 +94,26 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             int co2 = Integer.parseInt(co2hex, 16);
             int lux = Integer.parseInt(luxhex,16);
             Measurement measurement = new Measurement(0,t1,date,temperature,humidity,co2,lux);
-            //send stuff to db under this
-            //AMOGUS
-            //also call the senCommand method after putting the data in the db
+
+            try
+            {
+                //put measurment is amogusDB
+            }
+            catch ("amogus exception" e)
+            {
+                e.printStackTrace();
+            }
+
+            try
+            {
+                sendCommand();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            webSocket.request(1);
 
         }
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
@@ -127,7 +143,7 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         }
         //do we need a confirmed field in the downlink message? and do we need to set it to false here?
         DownlinkMessage msg = new DownlinkMessage("tx","0004A30B00251001",1, command);
-        //refer to line 76
+        //refer to line 75
         Gson gson = new Gson();
         //surround with try catch maybe
         sendDownLink(gson.toJson(msg));
