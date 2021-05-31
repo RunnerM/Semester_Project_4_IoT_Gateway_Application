@@ -10,6 +10,10 @@ public class DBDriverManager
 
     public static DBDriverManager getInstance()
     {
+        if(instance == null)
+        {
+            instance = new DBDriverManager();
+        }
         return instance;
     }
     public DBDriverManager()
@@ -38,10 +42,18 @@ public class DBDriverManager
     }
     public boolean getServoState(String EUI) throws SQLException
     {
-
+        String query = "";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(query);
+        boolean result =rs.
+        return result;
     }
     public boolean getLightState(String EUI) throws SQLException
     {
-
+        String query = "";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(query);
+        boolean result =rs.
+        return result;
     }
 }
