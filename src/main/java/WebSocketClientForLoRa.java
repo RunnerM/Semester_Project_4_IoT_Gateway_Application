@@ -7,6 +7,8 @@ import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletableFuture;
 import com.google.gson.Gson;
@@ -85,16 +87,14 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             String co2hex = message.getData().substring(8,12);
             String luxhex = message.getData().substring(12,16);
             //time from message
-            Time t = new Time(message.ts);
-            Time t1 = new Time(t.getHours(), t.getMinutes(), 0);
-            Date date = new Date(message.ts);
+            Timestamp time = new Timestamp(message.ts);
             //hex to int
             int humidity = Integer.parseInt(humhex,16);
             int temperature = Integer.parseInt(temphex,16);
             //not sure if its correct for co2 and lux
             int co2 = Integer.parseInt(co2hex, 16);
             int lux = Integer.parseInt(luxhex,16);
-            Measurement measurement = new Measurement(0,t1,date,temperature,humidity,co2,lux);
+            Measurement measurement = new Measurement(0,time,temperature,humidity,co2,lux);
             System.out.println(measurement);
 
             try

@@ -34,11 +34,20 @@ public class DBDriverManager
     }
     public void insertMeasurements(String EUI,Measurement measurement) throws SQLException
     {
-        String query = "";
-        Statement st = connection.createStatement();
+        //idk if the following works
+        String query = "INSERT into MotherBoardData(time,temprature,humidity,co2,lightlevel,eui)" + "VALUeS(?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setTimestamp(1,measurement.getTime());
+        statement.setInt(2,measurement.getTemperature());
+        statement.setInt(3,measurement.getHumidity());
+        statement.setInt(4,measurement.getCO2Level());
+        statement.setInt(5,measurement.getLux());
+        statement.setString(6,EUI);
+        statement.executeBatch();
+        /*Statement st = connection.createStatement();
         st.executeUpdate(query);
         st.close();
-        connection.close();
+        connection.close();*/
     }
     public boolean getServoState(String EUI) throws SQLException
     {

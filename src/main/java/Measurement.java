@@ -1,20 +1,20 @@
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class Measurement
 {
     int terrariumId;
-    Time time;
-    Date date;
+    Timestamp time;
     int Temperature;
     int Humidity;
     int CO2Level;
     int lux;
-    public Measurement(int tid,Time time, Date date, int temperature, int humidity, int CO2Level, int lux)
+    public Measurement(int tid, Timestamp time, int temperature, int humidity, int CO2Level, int lux)
     {
         terrariumId = tid;
         this.time = time;
-        this.date = date;
         Temperature = temperature;
         Humidity = humidity;
         this.CO2Level = CO2Level;
@@ -30,27 +30,15 @@ public class Measurement
         this.terrariumId = terrariumId;
     }
 
-    public Time getTime()
-    {
+    public Timestamp getTime() {
         return time;
     }
 
-    public void setTime(Time time)
-    {
+    public void setTime(Timestamp time) {
         this.time = time;
     }
 
-    public Date getDate()
-    {
-        return date;
-    }
-
-    public void setDate(Date date)
-    {
-        this.date = date;
-    }
-
-    public float getTemperature()
+    public int getTemperature()
     {
         return Temperature;
     }
@@ -60,7 +48,7 @@ public class Measurement
         Temperature = temperature;
     }
 
-    public float getHumidity()
+    public int getHumidity()
     {
         return Humidity;
     }
@@ -94,7 +82,6 @@ public class Measurement
         return "Measurement{" +
                 ", TerrariumID=" + terrariumId +
                 ", time=" + time +
-                ", date=" + date +
                 ", Temperature=" + Temperature +
                 ", Humidity=" + Humidity +
                 ", CO2Level=" + CO2Level +
