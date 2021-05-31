@@ -5,6 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletableFuture;
@@ -98,7 +99,7 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
 
             try
             {
-                sendCommand();
+                sendCommand(message.getEUI());
             }
             catch (Exception e)
             {
@@ -107,9 +108,11 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
 
             try
             {
+                DBDriverManager amogusDb = DBDriverManager.getInstance();
+                amogusDb.insertMeasurements(message.getEUI(), measurement);
                 //put measurment is amogusDB
             }
-            catch ("amogus exception" e)
+            catch (SQLException e)
             {
                 e.printStackTrace();
             }
@@ -120,28 +123,33 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         }
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     };
-    private void sendCommand()
+    private void sendCommand(String EUI)
     {
         //byte 0 : 0 = servo position 100, 1 = servo position -100
         //byte 1 : 0 = led off, 1 = led on
         String command = null;
         //replace the db stuff tomorrow
         //surround the following with try catch maybe, idk
-        if(amogusDB.getServoState())
-        {
-            command = "01";
-        }
-        else
-        {
-            command = "00";
-        }
-        if(amogusDB.getLightState())
-        {
-            command += "01";
-        }
-        else
-        {
-            command += "00";
+        try {
+            DBDriverManager amogusDB = DBDriverManager.getInstance();
+            if(amogusDB.getServoState(EUI))
+            {
+                command = "01";
+            }
+            else
+            {
+                command = "00";
+            }
+            if(amogusDB.getLightState(EUI))
+            {
+                command += "01";
+            }
+            else
+            {
+                command += "00";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         //do we need a confirmed field in the downlink message? and do we need to set it to false here?
         DownlinkMessage msg = new DownlinkMessage("tx","0004A30B00251001",2, command);
