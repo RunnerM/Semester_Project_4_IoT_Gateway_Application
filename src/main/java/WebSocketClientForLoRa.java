@@ -94,6 +94,16 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             int co2 = Integer.parseInt(co2hex, 16);
             int lux = Integer.parseInt(luxhex,16);
             Measurement measurement = new Measurement(0,t1,date,temperature,humidity,co2,lux);
+            System.out.println(measurement);
+
+            try
+            {
+                sendCommand();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             try
             {
@@ -104,14 +114,6 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
                 e.printStackTrace();
             }
 
-            try
-            {
-                sendCommand();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
 
             webSocket.request(1);
 
@@ -142,12 +144,12 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             command += "00";
         }
         //do we need a confirmed field in the downlink message? and do we need to set it to false here?
-        DownlinkMessage msg = new DownlinkMessage("tx","0004A30B00251001",1, command);
+        DownlinkMessage msg = new DownlinkMessage("tx","0004A30B00251001",2, command);
         //refer to line 75
         Gson gson = new Gson();
         //surround with try catch maybe
+        System.out.println(gson.toJson(msg));
         sendDownLink(gson.toJson(msg));
-
     }
 
 }
