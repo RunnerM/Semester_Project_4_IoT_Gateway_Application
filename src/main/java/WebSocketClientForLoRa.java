@@ -99,7 +99,7 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
 
             try
             {
-                sendCommand(message.getEUI());
+                sendCommand(message.getEUI(), measurement.getTime());
             }
             catch (Exception e)
             {
@@ -123,7 +123,7 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         }
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     };
-    private void sendCommand(String EUI)
+    private void sendCommand(String EUI,Timestamp time)
     {
         //byte 0 : 0 = servo position 100, 1 = servo position -100
         //byte 1 : 0 = led off, 1 = led on
@@ -132,7 +132,8 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         //surround the following with try catch maybe, idk
         try {
             DBDriverManager amogusDB = DBDriverManager.getInstance();
-            if(amogusDB.getServoState(EUI))
+            boolean[] results = amogusDB.getActionStates(EUI, time);
+            if(results[0])
             {
                 command = "01";
             }
@@ -140,7 +141,7 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             {
                 command = "00";
             }
-            if(amogusDB.getLightState(EUI))
+            if(results[1])
             {
                 command += "01";
             }

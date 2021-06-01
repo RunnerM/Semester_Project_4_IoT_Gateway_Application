@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Formatter;
 
 public class DBDriverManager
 {
@@ -49,7 +51,7 @@ public class DBDriverManager
         st.close();
         connection.close();*/
     }
-    public boolean getServoState(String EUI) throws SQLException
+    public boolean[] getActionStates(String EUI, Timestamp time) throws SQLException
     {
         int recordId = -1;
         int mbid = -1;
@@ -65,17 +67,22 @@ public class DBDriverManager
         statement.setInt(1,mbid);
         rs = statement.executeQuery();
         terrariumId = rs.getInt("terrariumid");
-        query = "SELECT togglevent, togglelight" + "FROM tasks" +  "WHERE terrariumid = ?" + ;
-        statement = connection.prepareStatement(query);
-        statement.setInt(1,terrariumId);
+        String fiveMinsAgo, now;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");
+        now = "'" +dateFormat.format(new Date(time.getTime())) + "'";
+        fiveMinsAgo = "'" +dateFormat.format(new Date(time.getTime()-300000))+ "'";
 
+
+        query = "SELECT togglevent, togglelight FROM tasks WHERE terrariumid = " + terrariumId + "AND WHERE time <= " + now + "AND time >" + fiveMinsAgo ;
+        statement = connection.prepareStatement(query);
+        rs = statement.executeQuery();
+
+
+
+
+
+        boolean[] results = {true,true};
+        return results;
     }
-    public boolean getLightState(String EUI) throws SQLException
-    {
-        String query = "";
-        Statement st = connection.createStatement();
-        ResultSet rs = st.executeQuery(query);
-        boolean result =rs.
-        return result;
-    }
+
 }
