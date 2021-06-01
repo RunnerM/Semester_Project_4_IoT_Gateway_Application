@@ -2,9 +2,9 @@ import java.sql.*;
 
 public class DBDriverManager
 {
-    private final String url = "";
-    private final String user = "";
-    private final String password = "";
+    private final String Url = "";
+    private final String User = "";
+    private final String Password = "";
     private Connection connection;
     private static DBDriverManager instance = new DBDriverManager();
 
@@ -25,7 +25,7 @@ public class DBDriverManager
         try
         {
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(url, user, password);
+            connection = DriverManager.getConnection(Url, User, Password);
         }
         catch (SQLException | ClassNotFoundException e)
         {
@@ -51,11 +51,24 @@ public class DBDriverManager
     }
     public boolean getServoState(String EUI) throws SQLException
     {
-        String query = "";
-        Statement st = connection.createStatement();
-        ResultSet rs = st.executeQuery(query);
-        boolean result =rs.
-        return result;
+        int recordId = -1;
+        int mbid = -1;
+        int terrariumId = -1;
+        int taskId = -1;
+        String query = "SELECT motherboardid " + "FROM MotherBoardData" + "WHERE EUI = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1,EUI);
+        ResultSet rs = statement.executeQuery();
+        mbid = rs.getInt("motherboardid");
+        query = "SELECT terrariumid" + "FFROM Terrarium" + "WHERE motherboardid = ?";
+        statement = connection.prepareStatement(query);
+        statement.setInt(1,mbid);
+        rs = statement.executeQuery();
+        terrariumId = rs.getInt("terrariumid");
+        query = "SELECT togglevent, togglelight" + "FROM tasks" +  "WHERE terrariumid = ?" + ;
+        statement = connection.prepareStatement(query);
+        statement.setInt(1,terrariumId);
+
     }
     public boolean getLightState(String EUI) throws SQLException
     {
