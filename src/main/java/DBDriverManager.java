@@ -4,9 +4,9 @@ import java.util.Formatter;
 
 public class DBDriverManager
 {
-    private final String Url = "";
-    private final String User = "";
-    private final String Password = "";
+    private final String Url = "jdbc:postgresql://sep4terrariumnewinstance.ctbb2v6dqmr8.eu-central-1.rds.amazonaws.com/TerrariumDB";
+    private final String User = "postgres";
+    private final String Password = "postgres123";
     private Connection connection;
     private static DBDriverManager instance = new DBDriverManager();
 
@@ -28,6 +28,7 @@ public class DBDriverManager
         {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(Url, User, Password);
+            if(connection.isValid(2000)) System.out.println("works");
         }
         catch (SQLException | ClassNotFoundException e)
         {
@@ -53,6 +54,7 @@ public class DBDriverManager
     }
     public boolean[] getActionStates(String EUI, Timestamp time) throws SQLException
     {
+        boolean[] results = {true,true};
         int recordId = -1;
         int mbid = -1;
         int terrariumId = -1;
@@ -73,15 +75,15 @@ public class DBDriverManager
         fiveMinsAgo = "'" +dateFormat.format(new Date(time.getTime()-300000))+ "'";
 
 
-        query = "SELECT togglevent, togglelight FROM tasks WHERE terrariumid = " + terrariumId + "AND WHERE time <= " + now + "AND time >" + fiveMinsAgo ;
+        query = "SELECT togglevent, togglelight FROM tasks WHERE terrariumid = " + terrariumId + "AND WHERE time <= " + now + "AND time >" + fiveMinsAgo  ;
         statement = connection.prepareStatement(query);
         rs = statement.executeQuery();
+        results[0] = rs.getBoolean("togglevent");
+        results[1] = rs.getBoolean("togglelight");
 
 
 
 
-
-        boolean[] results = {true,true};
         return results;
     }
 
