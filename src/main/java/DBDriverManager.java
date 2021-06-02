@@ -75,7 +75,7 @@ public class DBDriverManager
         fiveMinsAgo = "'" +dateFormat.format(new Date(time.getTime()-300000))+ "'";
 
 
-        query = "SELECT togglevent, togglelight FROM tasks WHERE terrariumid = " + terrariumId + "AND WHERE time <= " + now + "AND time >" + fiveMinsAgo  ;
+        query = "SELECT togglevent, togglelight FROM tasks WHERE terrariumid = " + terrariumId + "AND time <= " + now + "AND time >" + fiveMinsAgo  ;
         statement = connection.prepareStatement(query);
         rs = statement.executeQuery();
         results[0] = rs.getBoolean("togglevent");
