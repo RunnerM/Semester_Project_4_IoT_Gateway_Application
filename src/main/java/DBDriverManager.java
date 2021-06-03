@@ -2,7 +2,12 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Formatter;
-
+/**
+ * <h3>Database driver</h3>
+ * It is fresponsible for database access, serves as a layer between the general java code and JDBC
+ * @author  Ali
+ * @version 0.9
+ */
 public class DBDriverManager
 {
     private final String Url = "jdbc:postgresql://sep4terrariumnewinstance.ctbb2v6dqmr8.eu-central-1.rds.amazonaws.com/TerrariumDB";
@@ -36,9 +41,15 @@ public class DBDriverManager
             e.printStackTrace();
         }
     }
+    //onText()
+    /**
+     * This method is called to insert the received measurements into the database
+     * @param EUI the EUI of the device where the measurements are coming from
+     * @param measurement the measurement data itself
+     * @exception SQLException on failed connection, wrong query or other issues stemming from an sql operation
+     */
     public void insertMeasurements(String EUI,Measurement measurement) throws SQLException
     {
-        //idk if the following works
         String query = "INSERT into MotherBoardData(time,temperature,humidity,co2,lightlevel,eui)" + "VALUeS(?,?,?,?,?,?)";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setTimestamp(1,measurement.getTime());
@@ -48,28 +59,24 @@ public class DBDriverManager
         statement.setInt(5,measurement.getLux());
         statement.setString(6,EUI);
         statement.execute();
-        System.out.println("bruv");
-        /*Statement st = connection.createStatement();
-        st.executeUpdate(query);
-        st.close();
-        connection.close();*/
     }
+    //onText()
+    /**
+     * This method is called to insert the received measurements into the database
+     * @param EUI the EUI of the device that we need to retreive the tasks for
+     * @param time the time which is considered now, it defines the time window of the task that is retrieved
+     * @return boolean[] an array of three booleans, the first entry represents the state of the vent, the second the state of the light, and the third indicates if any tasks existed in the specified time frame, if yes, is set to true, it is false by default
+     * @exception SQLException on failed connection, wrong query or other issues stemming from an sql operation
+     */
     public boolean[] getActionStates(String EUI, Timestamp time) throws SQLException
     {
         boolean[] results = {false,false,false};
-        int recordId = -1;
-        int mbid = -1;
         int terrariumId = -1;
-        int taskId = -1;
         /*String query = "SELECT motherboardid " + "FROM MotherBoardData" + "WHERE EUI = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1,EUI);
         ResultSet rs = statement.executeQuery();
         mbid = rs.getInt("motherboardid");*/
-
-
-
-
         String query = "SELECT terrariumid FROM terrarium WHERE EUI = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1,EUI);
@@ -85,9 +92,6 @@ public class DBDriverManager
         c.add(Calendar.MINUTE, -500);
         fiveMinsAgo = "'" +dateFormat.format(c.getTime())+ "'";
         //+ "ORDER BY tasktime LIMIT 1"
-
-
-
         query = "SELECT togglevent, togglelight FROM tasks WHERE terrariumid = " + terrariumId + " AND tasktime BETWEEN " + fiveMinsAgo + " AND " + now;
         statement = connection.prepareStatement(query);
         rs = statement.executeQuery();
@@ -98,7 +102,6 @@ public class DBDriverManager
             results[0] = rs.getBoolean("togglevent");
             results[1] = rs.getBoolean("togglelight");
         }
-
         return results;
     }
 

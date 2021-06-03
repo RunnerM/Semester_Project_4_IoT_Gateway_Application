@@ -2,7 +2,11 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-
+/**
+ * <h3>Measurement</h3>
+ * This holds the measurement values
+ * @version 1.0
+ */
 public class Measurement
 {
     int terrariumId;

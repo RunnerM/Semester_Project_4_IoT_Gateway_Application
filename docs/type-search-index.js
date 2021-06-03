@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"<Unnamed>","l":"DBDriverManager"},{"p":"<Unnamed>","l":"DownlinkMessage"},{"p":"<Unnamed>","l":"main"},{"p":"<Unnamed>","l":"Measurement"},{"p":"<Unnamed>","l":"Message"},{"p":"<Unnamed>","l":"Task"},{"p":"<Unnamed>","l":"WebSocketClientForLoRa"}]

@@ -1,3 +1,8 @@
+/**
+ * <h3>Message</h3>
+ * This holds the data received from the LoRa network
+ * @version 1.0
+ */
 public class Message
 {
     String cmd;

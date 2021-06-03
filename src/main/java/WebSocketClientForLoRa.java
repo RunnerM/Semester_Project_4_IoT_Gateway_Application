@@ -12,7 +12,15 @@ import java.time.LocalDateTime;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletableFuture;
 import com.google.gson.Gson;
-
+/**
+ * <h3>WEBSOCKET CLIENT</h3>
+ * It implements functionality to receive data from the
+ * IoT board through the LoRaWAN network via websockets
+ * and send commands back to the LoRaWAN network
+ *
+ * @author  Ali
+ * @version 0.9.10
+ */
 public class WebSocketClientForLoRa implements WebSocket.Listener {
     private WebSocket server = null;
 
@@ -66,6 +74,13 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         return new CompletableFuture().completedFuture("Pong completed.").thenAccept(System.out::println);
     };
     //onText()
+    /**
+     * This method is invoked when a message from the LoRa network websocket is received
+     * It deserlized the received message, extracts the relevant data and uses DB driver to save it to the DB
+     * @param webSocket the websocket which we are connected to.
+     * @param data the data recieved from the socket,as a sequnce of characters, will be tuned into a json
+     * @return CompletionStage irrelevant.
+     */
     public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
         String indented = null;
         try{
@@ -75,10 +90,8 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             System.out.println("Json Error");
             return null;
         }
-        //maybe inject gson, idk
         Gson gson = new Gson();
         Message message = gson.fromJson(indented, Message.class);
-        //idk what rx or cmd mean
         if (message.getCmd().equals("rx"))
         {
             //hex values of each piece of data
@@ -96,20 +109,15 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             int lux = Integer.parseInt(luxhex,16);
             Measurement measurement = new Measurement(0,time,temperature,humidity,co2,lux);
             System.out.println(measurement);
-
-
-
             try
             {
                 DBDriverManager db = DBDriverManager.getInstance();
                 db.insertMeasurements(message.getEUI(), measurement);
-                //put measurment is DB
             }
             catch (SQLException e)
             {
                 e.printStackTrace();
             }
-
             try
             {
                 sendCommand(message.getEUI(), measurement.getTime());
@@ -118,12 +126,17 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             {
                 e.printStackTrace();
             }
-
             webSocket.request(1);
-
         }
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     };
+
+    /**
+     * Is the methods responsible for sending the commands retrieved from the database to the board.
+     * @param EUI the EUI of the device that the command will be sent to, should be noted that this is only for identifying the board in the database, not in the LoRa network.
+     * @param time the time which the initiating uplink message was sent to the LoRa network, is used to define the time window of relevant tasks.
+     * @return Nothing.
+     */
     private void sendCommand(String EUI,Timestamp time)
     {
         //byte 0 : 0 = servo position 100, 1 = servo position -100
