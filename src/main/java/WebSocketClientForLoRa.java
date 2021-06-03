@@ -101,9 +101,9 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
 
             try
             {
-                DBDriverManager amogusDb = DBDriverManager.getInstance();
-                amogusDb.insertMeasurements(message.getEUI(), measurement);
-                //put measurment is amogusDB
+                DBDriverManager db = DBDriverManager.getInstance();
+                db.insertMeasurements(message.getEUI(), measurement);
+                //put measurment is DB
             }
             catch (SQLException e)
             {
@@ -132,8 +132,8 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         //replace the db stuff tomorrow
         //surround the following with try catch maybe, idk
         try {
-            DBDriverManager amogusDB = DBDriverManager.getInstance();
-            boolean[] results = amogusDB.getActionStates(EUI, time);
+            DBDriverManager DB = DBDriverManager.getInstance();
+            boolean[] results = DB.getActionStates(EUI, time);
             if(results[2])
             {
                 if(results[0])
