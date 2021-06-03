@@ -97,14 +97,7 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
             Measurement measurement = new Measurement(0,time,temperature,humidity,co2,lux);
             System.out.println(measurement);
 
-            try
-            {
-                sendCommand(message.getEUI(), measurement.getTime());
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+
 
             try
             {
@@ -117,6 +110,14 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
                 e.printStackTrace();
             }
 
+            try
+            {
+                sendCommand(message.getEUI(), measurement.getTime());
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             webSocket.request(1);
 
@@ -133,32 +134,36 @@ public class WebSocketClientForLoRa implements WebSocket.Listener {
         try {
             DBDriverManager amogusDB = DBDriverManager.getInstance();
             boolean[] results = amogusDB.getActionStates(EUI, time);
-            if(results[0])
+            if(results[2])
             {
-                command = "01";
-            }
-            else
-            {
-                command = "00";
-            }
-            if(results[1])
-            {
-                command += "01";
-            }
-            else
-            {
-                command += "00";
+                if(results[0])
+                {
+                    command = "01";
+                }
+                else
+                {
+                    command = "00";
+                }
+                if(results[1])
+                {
+                    command += "01";
+                }
+                else
+                {
+                    command += "00";
+                }
+
+            //do we need a confirmed field in the downlink message? and do we need to set it to false here?
+            DownlinkMessage msg = new DownlinkMessage("tx","0004A30B00251001",2, command);
+            //refer to line 75
+            Gson gson = new Gson();
+            //surround with try catch maybe
+            System.out.println(gson.toJson(msg));
+            sendDownLink(gson.toJson(msg));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //do we need a confirmed field in the downlink message? and do we need to set it to false here?
-        DownlinkMessage msg = new DownlinkMessage("tx","0004A30B00251001",2, command);
-        //refer to line 75
-        Gson gson = new Gson();
-        //surround with try catch maybe
-        System.out.println(gson.toJson(msg));
-        sendDownLink(gson.toJson(msg));
     }
 
 }
